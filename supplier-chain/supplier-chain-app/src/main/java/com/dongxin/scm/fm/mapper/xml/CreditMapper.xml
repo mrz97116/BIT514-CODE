@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.fm.mapper.CreditMapper">
+    <select id="numberMax" resultType="Long" parameterType="java.lang.String">
+        SELECT MAX(
+                       SUBSTR(credit_no, 11, 2))
+        FROM FM_CREDIT T
+        WHERE SUBSTR(T.credit_no, 1, 10) = #{numSeq}
+    </select>
+</mapper>

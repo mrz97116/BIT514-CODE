@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.fm.mapper.FundAccountMapper">
+
+    <select id="getFundAccountList" resultType="com.dongxin.scm.fm.entity.Capital">
+        SELECT
+        sum(case when type = 'credit' then available_amount else 0 end) creditAccount,
+        sum(case when type = 'income' then available_amount else 0 end) incomeAccount,
+        sum(case when type = 'income' then preuse_amount else 0 end) incomePreUseAccount,
+        sum(case when type = 'credit' then preuse_amount else 0 end) creditPreUseAccount,
+        sum(available_amount) as totalAmount,
+        customer_id as customerId
+        FROM
+        fm_fund_account
+        WHERE
+        del_flag = 0
+        <if test="customerId != null and customerId != ''">
+            AND customer_id = #{customerId}
+        </if>
+        GROUP BY
+        customer_id
+        order by
+        totalAmount desc
+    </select>
+
+    <select id="getFundAccountSummaryList" resultType="com.dongxin.scm.fm.vo.FundAccountVO">
+        SELECT
+            any_value ( fa.tenant_id ) tenantId,
+            fa.customer_id customerId,
+            sum( any_value ( fa.available_amount )+any_value ( fa.preuse_amount ) ) endingBanlance,
+            c.company_name companyName
+        FROM
+            fm_fund_account fa,
+            cm_customer_profile c
+        WHERE
+            fa.customer_id = c.id
+            AND fa.tenant_id NOT IN ( '1' )
+            and fa.available_amount >=0
+        GROUP BY
+            fa.customer_id
+    </select>
+
+    <select id="selectUnSettleAccountAndStackSettleAccount" resultType="com.dongxin.scm.fm.vo.FundAccountVO">
+        select a.id AS customerId from (select s.id id,sum(discount_total_amount) settleAccount from sm_stack s,sm_stack_det sd where
+        s.customer_id = '1372008361596887041' and s.id = sd.stack_id and s.del_flag = 0 and s.tenant_id = 2 and
+        sd.del_flag = 0 and sd.tenant_id = 2 GROUP BY s.id) a,(select si.stack_id stackId,si.settle_amount settleAccount
+        from fm_settle_info si where si.customer = '1372008361596887041' and si.del_flag = 0 and si.tenant_id = 2) b
+        where a.id = b.stackId and a.settleAccount != b.settleAccount
+    </select>
+
+    <select id="getUnSettleTotalAmount" resultType="com.dongxin.scm.fm.entity.FundDetail">
+        select
+            *
+        from
+            fm_fund_detail
+        where
+            type = 'pre_use_stack'
+            and del_flag = '0'
+            <if test="customerId != null and customerId != ''">
+                and customer_id = #{customerId}
+            </if>
+    </select>
+
+
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.cm.mapper.CustomerProfileMapper">
+
+    <select id="queryCustomer" resultType="com.dongxin.scm.om.vo.OptionVO">
+        SELECT id           as value,
+               company_name as text
+        FROM cm_customer_profile
+    </select>
+
+    <select id="getName" resultType="com.dongxin.scm.cm.entity.CustomerProfile">
+        SELECT *
+        FROM cm_customer_profile
+    </select>
+
+    <select id="getCustomerProfileList" resultType="com.dongxin.scm.cm.entity.CustomerProfile">
+        select
+            *
+        from
+            cm_customer_profile
+        where
+            del_flag = 0
+        <if test="customerId != null and customerId != ''">
+            AND id = #{customerId}
+        </if>
+    </select>
+
+</mapper>

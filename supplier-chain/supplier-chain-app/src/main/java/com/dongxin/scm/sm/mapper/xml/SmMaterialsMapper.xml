@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.sm.mapper.SmMaterialsMapper">
+    <select id="queryMaterialsWeight" resultType="Double" parameterType="com.dongxin.scm.sm.entity.Mat">
+        SELECT IFNULL((SELECT theory_weigh_b
+        FROM sm_materials s
+        <where>
+            <if test="mat != null">
+                <if test="mat.matLen != null and mat.sgSign != ''">
+                    and s.length_s = #{mat.matLen}
+                </if>
+                <if test="mat.matThick != null and mat.matThick != ''">
+                    and SUBSTRING(s.standard_s,2) = #{mat.matThick}
+                </if>
+                LIMIT 1
+            </if>
+        </where>
+        ),0)
+    </select>
+</mapper>

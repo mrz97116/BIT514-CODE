@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.fm.mapper.FinanceCheckMapper">
+
+    <select id="getCustomerId" resultType="java.lang.String">
+        select id from cm_customer_profile where company_name = #{companyName} and tenant_id = #{tenantId}
+    </select>
+
+    <select id="sumIncome" resultType="java.math.BigDecimal">
+        select sum(incoming_amount) from fm_fund_pool
+        where customer_id = #{customerId} and verify_date >'2021-03-31 23:59:59'
+        and del_flag = 0 and status = 'approve'
+    </select>
+</mapper>

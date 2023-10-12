@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.om.mapper.OrderMatMapper">
+    <select id="queryWeight" resultType="Double" parameterType="com.dongxin.scm.sm.entity.Mat">
+        SELECT IFNULL((SELECT weight
+        FROM om_order_mat t
+        <where>
+            <if test="mat != null">
+                <if test="mat.sgSign != null and mat.sgSign != ''">
+                    and t.sg_sign = #{mat.sgSign}
+                </if>
+                <if test="mat.technicalStandard != null and mat.technicalStandard != ''">
+                    and t.sg_std = #{mat.technicalStandard}
+                </if>
+                <if test="mat.prodClassCode != null and mat.prodClassCode != ''">
+                    and t.prod_class_code = #{mat.prodClassCode}
+                </if>
+                <if test="mat.prodCname != null and mat.prodCname != ''">
+                    and t.prod_cname = #{mat.prodCname}
+                </if>
+                <if test="mat.prodCnameOther != null and mat.prodCnameOther != ''">
+                    and t.prod_cname_other = #{mat.prodCnameOther}
+                </if>
+                <if test="mat.matKind != null and mat.matKind != ''">
+                    and t.mat_kind = #{mat.matKind}
+                </if>
+                LIMIT 1
+            </if>
+        </where>
+        ),0)
+    </select>
+</mapper>

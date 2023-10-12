@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.sm.mapper.StackMapper">
+    <select id="stackingNoMaxNum" resultType="Long" parameterType="java.lang.String">
+        SELECT MAX(SUBSTR(stacking_no, 11))
+        FROM sm_stack
+        WHERE SUBSTR(stacking_no, 3, 8) = #{now}
+    </select>
+
+
+    <select id="selectStackDetailVOPage" resultType="com.dongxin.scm.sm.vo.SelectSettlenInfoVO"
+            parameterType="com.dongxin.scm.sm.vo.StackDetailVO">
+        SELECT
+        <include refid="all_column"/>
+        FROM
+        sm_stack s
+        inner join
+        sm_stack_det sd on s.id = sd.stack_id
+        inner join
+        cm_customer_profile c on s.customer_id = c.id
+        inner join
+        cm_salesman_info cs on s.sales_man = cs.id
+        <where>
+            <if test="stackDetailVO != null">
+                <if test="stackDetailVO.customerId != null and stackDetailVO.customerId != ''">
+                    and c.id = #{stackDetailVO.customerId}
+                </if>
+                <if test="stackDetailVO.prodCode != null and stackDetailVO.prodCode != ''">
+                    and sd.prod_class_code = #{stackDetailVO.prodCode}
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectStackDetailVO" resultType="com.dongxin.scm.sm.vo.SelectSettlenInfoVO">
+        SELECT
+        <include refid="all_column"/>
+        FROM
+        sm_stack s
+        left join
+        sm_stack_det sd on s.id = sd.stack_id
+        left join
+        cm_customer_profile c on s.customer_id = c.id
+        WHERE
+        <foreach collection="stackDetailIdList" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+
+    </select>
+
+    <select id="selectStack" resultType="com.dongxin.scm.sm.vo.SelectSettlenInfoVO">
+        SELECT
+        <include refid="select_settlen_info_vo"/>
+        FROM
+        sm_stack s
+        left join
+        om_sales_order so on s.sales_order_id = so.id and so.del_flag = 0
+        <where>
+            s.del_flag = 0
+            AND s.settled = 'unsettle'
+            <if test="ids != null and ids != ''">
+                AND s.id in (${ids})
+            </if>
+            <if test="stackDetailVO != null">
+                <if test="stackDetailVO.customerId != null and stackDetailVO.customerId != ''">
+                    AND s.customer_id = #{stackDetailVO.customerId}
+                </if>
+                <if test="stackDetailVO.stackingNo != null and stackDetailVO.stackingNo != ''">
+                    AND s.stacking_no = #{stackDetailVO.stackingNo}
+                </if>
+                <if test="stackDetailVO.saleBillNo != null and stackDetailVO.saleBillNo != ''">
+                    AND s.sale_bill_no = #{stackDetailVO.saleBillNo}
+                </if>
+                <if test="stackDetailVO.remark != null and stackDetailVO.remark != ''">
+                    AND s.remark LIKE CONCAT(CONCAT('%',#{stackDetailVO.remark}),'%')
+                </if>
+                <if test="stackDetailVO.createTimeBegin != null">
+                    AND so.create_time &gt;= #{stackDetailVO.createTimeBegin}
+                </if>
+                <if test="stackDetailVO.createTimeEnd != null">
+                    AND so.create_time &lt;= #{stackDetailVO.createTimeEnd}
+                </if>
+                <if test="stackDetailVO.createBy != null and stackDetailVO.createBy != ''">
+                    AND s.create_by = #{stackDetailVO.createBy}
+                </if>
+                <if test="stackDetailVO.carNo != null and stackDetailVO.carNo != ''">
+                    AND s.car_no = #{stackDetailVO.carNo}
+                </if>
+                <if test="stackDetailVO.stackTimeBegin != null">
+                    AND s.create_time &gt;= #{stackDetailVO.stackTimeBegin}
+                </if>
+                <if test="stackDetailVO.stackTimeEnd != null">
+                    AND s.create_time &lt;= #{stackDetailVO.stackTimeEnd}
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="monthSales" resultType="java.math.BigDecimal">
+        SELECT TOTAL_AMOUNT
+        FROM SM_STACK T
+        WHERE SUBSTR(T.CREATE_TIME, 1, 7) = #{month}
+          AND T.tenant_id = #{tenantId}
+          AND T.del_flag = #{delFlag}
+    </select>
+
+    <select id="monthSalesLast" resultType="java.math.BigDecimal">
+        SELECT TOTAL_AMOUNT
+        FROM SM_STACK T
+        WHERE SUBSTR(T.CREATE_TIME, 1, 7) = #{month}
+          and SUBSTR(T.CREATE_TIME, 9, 2) &lt;= #{days}
+          AND T.tenant_id = #{tenantId}
+          AND T.del_flag = #{delFlag}
+    </select>
+
+    <select id="somedaySales" resultType="java.math.BigDecimal">
+        SELECT TOTAL_AMOUNT
+        FROM SM_STACK T
+        WHERE SUBSTR(T.CREATE_TIME, 1, 10) = #{someday}
+          AND T.tenant_id = #{tenantId}
+          AND T.del_flag = #{delFlag}
+    </select>
+
+    <sql id="all_column">
+        s.sale_bill_no AS saleBillNo, s.car_no AS carNo, c.id AS customerId, cs.id AS salesMan,
+          sd.prod_class_code AS prodClassCode, sd.sg_sign AS sgSign, sd.weight AS weight, sd.price AS price,
+           sd.id AS stackDetId, sd.settled AS state
+    </sql>
+
+    <sql id="select_settlen_info_vo">
+        s.sale_bill_no AS saleBillNo, s.stacking_no AS stackingNo, s.id AS stackId, s.customer_id AS customerId,
+         s.sales_man AS salesMan, s.settled AS state, s.weight AS weight, s.total_amount AS totalAmount, s.remark AS remark,
+          any_value(so.create_time) AS createTime, s.create_by AS createBy, s.car_no AS carNo, s.create_time AS stackCreateTime
+    </sql>
+
+    <select id="getMonthStack" resultType="com.dongxin.scm.sm.entity.Stack">
+        SELECT *
+        FROM sm_stack
+        WHERE create_time &gt;= #{thisMonthNumberOne}
+          AND del_flag = #{delFlag}
+    </select>
+
+    <select id="sevenDayStackInfo" resultType="com.dongxin.scm.sm.entity.Stack">
+        SELECT *
+        FROM sm_stack
+        WHERE create_time &gt;= #{sevenDaysAgoDate}
+          AND del_flag = #{delFlag}
+    </select>
+
+    <select id="initQueryBillIds" resultType="java.lang.String">
+        select id
+        from ch_init_bill_main
+        where status = #{status}
+    </select>
+
+    <select id="initQueryStack" resultType="com.dongxin.scm.sm.entity.InitStack">
+        select *
+        from ch_init_stack
+        where bill_id in
+        <foreach collection="billIds" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="initQueryStackDets" resultType="com.dongxin.scm.sm.entity.InitStackDet">
+        select *
+        from ch_init_stack_dat
+        where stack_id = #{stackId}
+    </select>
+
+    <select id="initQueryStockId" resultType="com.dongxin.scm.sm.vo.OptionVO">
+        select id value, name text
+        from sm_stock
+        where name = #{stockName}
+    </select>
+
+    <select id="initQueryInventory" resultType="com.dongxin.scm.sm.entity.Inventory">
+        select *
+        from sm_inventory
+        where id = #{id}
+    </select>
+
+    <select id="selectUnsettleCustomerId" resultType="com.dongxin.scm.sm.vo.OptionVO">
+        select
+            cm.company_name AS text,
+            cm.id AS value
+        from
+            sm_stack sm,
+            cm_customer_profile cm
+        where
+            sm.customer_id = cm.id
+            and
+            sm.settled = 'unsettle'
+            GROUP BY cm.id
+    </select>
+    <select id="selectDeleteStack" resultType="com.dongxin.scm.sm.entity.Stack">
+        select *
+        from sm_stack
+        where del_flag = 1
+        and create_time between #{startTime} and #{endTime}
+    </select>
+
+    <select id="sumUnSettleStackAmount" resultType="java.math.BigDecimal">
+        select ifnull(sum(total_amount), 0) from sm_stack where customer_id = #{customerId} and settled = 'unsettle' and del_flag = 0
+    </select>
+
+
+</mapper>

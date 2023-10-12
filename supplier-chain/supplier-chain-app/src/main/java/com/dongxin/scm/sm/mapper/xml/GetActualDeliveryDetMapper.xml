@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.sm.mapper.GetActualDeliveryDetMapper">
+
+	<delete id="deleteByMainId" parameterType="String">
+		DELETE 
+		FROM  sm_get_actual_delivery_det 
+		WHERE
+			 get_actual_delivery_id = #{mainId} 
+	</delete>
+	
+	<select id="selectByMainId" parameterType="String" resultType="com.dongxin.scm.sm.entity.GetActualDeliveryDet">
+		SELECT * 
+		FROM  sm_get_actual_delivery_det
+		WHERE
+			 get_actual_delivery_id = #{mainId} 
+	</select>
+</mapper>

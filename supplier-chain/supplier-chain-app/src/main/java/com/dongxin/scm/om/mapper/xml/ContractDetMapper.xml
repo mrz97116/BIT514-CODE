@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.om.mapper.ContractDetMapper">
+
+    <update id="deleteByMainId">
+        update om_contract_det
+        set del_flag = 1
+        where parent_id = #{mainId}
+    </update>
+
+    <select id="selectByMainId" parameterType="String" resultType="com.dongxin.scm.om.entity.ContractDet">
+        SELECT *
+        FROM om_contract_det
+        WHERE parent_id = #{mainId}    </select>
+</mapper>

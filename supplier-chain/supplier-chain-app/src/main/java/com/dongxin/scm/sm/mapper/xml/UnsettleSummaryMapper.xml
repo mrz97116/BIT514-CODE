@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.sm.mapper.UnsettleSummaryMapper">
+
+    <select id="queryUnsettleSummary" resultType="com.dongxin.scm.sm.entity.UnsettleSummary">
+        SELECT
+            ss.customer_id as customerId,
+            SUM( ssd.`weight` )  as  totalWeight,
+            SUM( ss.`total_amount` ) as totalAmount,
+            SUM( CASE ssd.`prod_class_code` WHEN 'B' THEN ssd.`weight` END ) as bxWeight,
+            SUM( CASE ssd.`prod_class_code` WHEN 'B' THEN ssd.`total_amount` END ) as bxAmount,
+            SUM( CASE ssd.`prod_class_code` WHEN 'D' THEN ssd.`weight` END ) as gxWeight,
+            SUM( CASE ssd.`prod_class_code` WHEN 'D' THEN ssd.`total_amount` END ) as gxAmount,
+            SUM( CASE ssd.`prod_class_code` WHEN 'H' THEN ssd.`weight` END ) as zbcWeight,
+            SUM( CASE ssd.`prod_class_code` WHEN 'H' THEN ssd.`total_amount` END ) as zbcAmount,
+            SUM( CASE ssd.`prod_class_code` WHEN 'F' THEN ssd.`weight` END ) as rzWeight,
+            SUM( CASE ssd.`prod_class_code` WHEN 'F' THEN ssd.`total_amount` END ) rzAmount,
+            SUM( CASE ssd.`prod_class_code` WHEN 'G' THEN ssd.`weight` END ) lzWeight,
+            SUM( CASE ssd.`prod_class_code` WHEN 'G' THEN ssd.`total_amount` END ) lzAmount,
+            SUM( CASE ssd.`prod_class_code` WHEN 'C' THEN ssd.`weight` END ) zxWeight,
+            SUM( CASE ssd.`prod_class_code` WHEN 'C' THEN ssd.`total_amount` END ) zxAmount,
+            SUM( CASE ssd.`prod_class_code` WHEN '外购材' THEN ssd.`weight` END ) wgcWeight,
+            SUM( CASE ssd.`prod_class_code` WHEN '外购材' THEN ssd.`total_amount` END ) wgcAmount,
+            SUM( CASE ssd.`prod_class_code` WHEN '自用材' THEN ssd.`weight` END ) zycWeight,
+            SUM( CASE ssd.`prod_class_code` WHEN '自用材' THEN ssd.`total_amount` END ) zycAmount
+        FROM
+            sm_stack_det ssd,
+            sm_stack ss
+        WHERE
+            ss.id = ssd.`stack_id`
+            AND ss.tenant_id = #{tenantId}
+            AND ssd.tenant_id = #{tenantId}
+            AND ss.`del_flag` = 0
+            AND ssd.`del_flag` = 0
+            AND ss.`settled` = 'unsettle'
+            AND ssd.create_time between #{startTime} and #{endTime}
+        GROUP BY
+            ss.customer_id
+    </select>
+</mapper>

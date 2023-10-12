@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.sm.mapper.InventoryMapper">
+
+
+    <select id="priceMsg" resultType="com.dongxin.scm.sm.dto.DailySalesDateDTO">
+        select mat,
+               base_price,
+               transaction_price
+        from sm_daily_mat_price
+    </select>
+
+    <select id="transactionWeight" resultType="com.dongxin.scm.sm.dto.DailySalesDateDTO">
+        select (ifnull(sum(weight), 0)) transactionWeight,
+               (ifnull((case
+                            when prod_class_code = 'D' and (sg_sign = 'HRB400E' or sg_sign = 'HRB500E') then '盘螺'
+                            when prod_class_code = 'D' then '高线'
+                            else (select mat from fm_mat_correspondence where prod_class_code = s.prod_class_code) end),
+                       0))              mat
+        from sm_stack_det s
+        where create_time between date_sub(curdate(), interval 0 hour) and date_add(curdate(), interval 24 hour)
+          and tenant_id = 2
+        group by mat
+    </select>
+
+    <select id="stockWeight" resultType="com.dongxin.scm.sm.dto.DailySalesDateDTO">
+        select (ifnull((sum(mat_net_wt)), 0)) stockWeight,
+               (ifnull((case
+                            when prod_class_code = 'D' and (sg_sign = 'HRB400E' or sg_sign = 'HRB500E') then '盘螺'
+                            when prod_class_code = 'D' then '高线'
+                            else (select mat from fm_mat_correspondence where prod_class_code = m.prod_class_code) end),
+                       '无'))                  mat
+        from sm_mat m
+        where create_time between date_sub(curdate(), interval 0 hour) and date_add(curdate(), interval 24 hour)
+          and tenant_id = 2
+        group by mat
+    </select>
+
+    <select id="inventoryWeight" resultType="com.dongxin.scm.sm.dto.DailySalesDateDTO">
+        select (ifnull((sum(weight)), 0))                                                                       inventoryWeight,
+               (case
+                    when prod_class_code = 'D' and (sg_sign = 'HRB400E' or sg_sign = 'HRB500E') then '盘螺'
+                    when prod_class_code = 'D' then '高线'
+                    else (select mat from fm_mat_correspondence where prod_class_code = i.prod_class_code) end) mat,
+               (case
+                    when prod_class_code = 'F' then concat(round(min(mat_thick), 2), '-', round(max(mat_thick), 2), '*',
+                                                           round(min(mat_width), 2), '-', round(max(mat_width), 2), '*',
+                                                           round(min(mat_len), 2), '-', round(max(mat_len)), 2)
+                    else concat(round(min(mat_thick), 2), '-', round(max(mat_thick)),
+                                2) end)                                                                         cust_mat_specs,
+               ifnull(wt_mode, 0)                                                                               wt_mode
+        from sm_inventory i
+        where tenant_id = 2
+        group by mat
+    </select>
+    <select id="getInventoryByMatNoIgnoreDelFlag" parameterType="java.lang.String" resultType="com.dongxin.scm.sm.entity.Inventory">
+        select
+            *
+        from
+            sm_inventory
+        where
+            mat_no = #{matNo}
+        and
+            del_flag = 1
+    </select>
+
+    <update id="setDelFlagFalseByMatNo" parameterType="java.lang.String">
+        update sm_inventory
+         set del_flag = 0
+         where mat_no = #{matNo}
+    </update>
+
+    <update id="setDelFlagFalseById" parameterType="java.lang.String">
+        update sm_inventory
+        set del_flag = 0 ,stock_house_id = #{stockHouseId}
+        where id = #{id}
+    </update>
+
+    <select id="getInventoryDelFlagById" parameterType="java.lang.String" resultType="com.dongxin.scm.sm.entity.Inventory">
+        select
+            *
+        from
+            sm_inventory
+        where
+            id = #{id}
+          and
+            del_flag = 1
+    </select>
+
+    <select id="getInventoryDataDelFlagById" parameterType="java.lang.String" resultType="com.dongxin.scm.sm.entity.Inventory">
+        select id, create_by, create_time, update_by, update_time
+	        , sys_org_code, mat_len, mat_width, mat_thick, del_flag
+	        , tenant_id, cust_mat_specs, mat_kind, mat_num, prod_cname_other
+	        , prod_class_code, sg_sign, prod_cname, stock_house_id, available_weight
+	        , available_qty, weight, mat_no, piece_weight, wt_mode
+	        , old_prod_cname, jx_prod_cname, sap_prod_cname, stock_location, mat_code
+            , cake_no, unit, lock_weight, lock_qty, inventory_lock_id
+            , remark, shipping_management_no, goods_no, plating_weight, surface_treatment
+            , in_stock_days
+        from sm_inventory
+        where id = #{id}
+    </select>
+
+</mapper>

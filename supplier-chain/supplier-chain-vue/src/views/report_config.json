@@ -1,0 +1,45 @@
+{
+  "name": "report_config",
+  "version": "1.0.0",
+  "reportUrl": {
+    "sm": {
+      "salesOrderUrl": "/SMS_ZX/SM/xxx/salesOrder.cpt",
+      "stackUrl": "/SMS_ZX/SM/xxx/signInOrder.cpt",
+      "salesOrder": "/SMS_ZX/SM/salesOrder.cpt",
+      "stack": "/SMS_ZX/SM/signInOrder.cpt",
+      "checkListUrl": "SMS_ZX/SM/xxx/checkList.cpt",
+      "checkListUrl_H": "SMS_ZX/SM/xxx/checkList_H.cpt",
+      "carGoodEntrustmentLetter": "SMS_ZX/SM/xxx/carGoodEntrustmentLetter.cpt",
+      "shippingGoodEntrustmentLetter": "SMS_ZX/SM/xxx/shippingGoodEntrustmentLetter.cpt"
+    },
+    "om": {
+      "contract": "/SMS_ZX/OM/contract.cpt",
+      "nomatdetailContract": "/SMS_ZX/OM/nomatdetailcontract.cpt"
+    },
+    "fm": {
+      "settle": "/SMS_ZX/FM/settle.cpt",
+      "settleUrl": "/SMS_ZX/FM/xxx/settlePrint.cpt"
+    },
+    "yrm": {
+      "mat": "/webroot/decision/view/report?viewlet=SMS_ZX%252FSM%252FYRM%252Fmat.cpt&ref_t=design&ref_c=6d5258ef-0bd9-4a14-bd9e-ef386918babe&tenant_id=",
+      "processingCoilUrl": "/SMS_ZX/SM/YRM/processingCoil.cpt",
+      "processingDlyUrl": "/SMS_ZX/SM/YRM/processingDly.cpt",
+      "H": "/SMS_ZX/SM/YRM/salesOrder_H.cpt"
+    },
+    "ch": {
+      "salesOrderUrl": "/webroot/decision/view/report?viewlet=SMS_ZX%252FSM%252FCH%252FsalesOrder.cpt"
+    },
+    "gd": {
+      "salesOrderUrl": "/SMS_ZX/SM/GD/goodEntrustmentLetter.cpt",
+      "salesOrderCarUrl": "/SMS_ZX/SM/GD/goodEntrustmentLetterCar.cpt",
+      "signInOrder": "/SMS_ZX/SM/GD/newSignInOrder.cpt",
+      "stack": "/SMS_ZX/SM/GD/stack.cpt",
+      "shippingGoodEntrustmentLetter": "SMS_ZX/SM/GD/shippingGoodEntrustmentLetter.cpt",
+      "cartageGoodEntrustmentLetter": "SMS_ZX/SM/GD/cartageGoodEntrustmentLetter.cpt",
+      "salesOrderUrl_H-1": "/SMS_ZX/SM/GD/goodEntrustmentLetter_H1.cpt",
+      "salesOrderUrl_H-2": "/SMS_ZX/SM/GD/goodEntrustmentLetter_H2.cpt",
+      "stackOrder": "/SMS_ZX/SM/GD/stackOrder.cpt",
+      "stackOrder_H": "/SMS_ZX/SM/GD/stackOrder_H.cpt"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.fm.mapper.BankMapper">
+
+    <select id="getBankTypeList" resultType="com.dongxin.scm.fm.vo.BankCategory">
+        select
+            fbt.type_id AS type,
+            fbc.type_name AS typeName
+        from
+            fm_bank_category fbc,
+            fm_bank_type fbt
+        where
+            fbc.type = fbt.category_id
+    </select>
+</mapper>
