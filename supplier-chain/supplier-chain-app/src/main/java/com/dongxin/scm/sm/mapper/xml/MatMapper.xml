@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.sm.mapper.MatMapper">
+    <select id="queryMatList" parameterType="hashmap" resultType="com.dongxin.scm.sm.entity.Mat">
+        SELECT
+        sg_sign,
+        prod_cname_other,
+        mat_no,
+        mat_kind,
+        mat_len,
+        mat_width,
+        mat_thick,
+        prod_class_code,
+        mat_status,
+        prod_code,
+        mat_act_thick,
+        mat_net_wt,
+        preuse_qty,
+        prod_class_desc,
+        prod_cname
+        FROM
+        sm_mat
+        <where>
+            <if test="prodClassCode != null and prodClassCode != ''">
+                and prod_class_code = #{prodClassCode}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectRepertoryWt" parameterType="com.dongxin.scm.om.entity.OrderDet" resultType="java.lang.Double">
+        SELECT
+        SUM( t.mat_net_wt )
+        FROM
+        sm_mat t
+        <where>
+            <if test="orderDet.prodCname != null">
+                t.prod_cname = #{orderDet.prodCname}
+            </if>
+            <if test="orderDet.prodClassCode != null">
+                and t.prod_class_code = #{orderDet.prodClassCode}
+            </if>
+            <if test="orderDet.prodCnameOther != null">
+                and t.prod_cname_other = #{orderDet.prodCnameOther}
+            </if>
+            <if test="orderDet.orderLen != null">
+                and t.mat_len = #{orderDet.orderLen}
+            </if>
+            <if test="orderDet.orderWidth != null">
+                and t.mat_width = #{orderDet.orderWidth}
+            </if>
+            <if test="orderDet.orderThick != null">
+                and t.mat_thick = #{orderDet.orderThick}
+            </if>
+            <if test="orderDet.matKind != null">
+                and t.mat_kind = #{orderDet.matKind}
+            </if>
+            <if test="orderDet.sgSign != null">
+                and t.sg_sign = #{orderDet.sgSign}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="queryByMatNo" parameterType="String" resultType="com.dongxin.scm.sm.entity.Mat">
+        SELECT
+        id
+        FROM
+        sm_mat
+        <where>
+            <if test="matNo != null and matNo != ''">
+                and mat_no = #{matNo}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryTenantIdByCompanyName" resultType="java.lang.Integer">
+        select
+          id
+        from
+          sys_tenant
+        where
+          name = #{companyName}
+    </select>
+
+    <select id="queryCompanyNameByTenantId" resultType="java.lang.String">
+        select
+          name
+        from
+          sys_tenant
+        where
+          id = #{tenantId}
+    </select>
+
+    <select id="selectMatRecoverId" resultType="java.lang.String">
+        select
+            id
+        from
+            sm_mat_recover
+    </select>
+
+    <select id="queryByCH" resultType="com.dongxin.scm.sm.entity.Mat">
+        SELECT
+        *
+        FROM
+        sm_mat
+        where tenant_id=2 and prod_class_code in ('F','G') and del_flag=0
+    </select>
+
+    <select id="queryMatYrmH" resultType="com.dongxin.scm.sm.dto.MatDTO">
+        SELECT
+            *
+        FROM
+            `sm_yrm_h_init_5-25`
+        WHERE
+            qty >= 1
+            AND custMatSpecs IS NOT NULL
+    </select>
+
+
+    <select id="queryByYrmH" resultType="com.dongxin.scm.sm.entity.Mat">
+        SELECT
+            *
+        FROM
+            sm_mat
+        WHERE
+            tenant_id = 7
+            AND del_flag = 0
+            AND prod_class_code = 'H'
+            AND create_time > '2021-05-26 10:58:27'
+    </select>
+
+    <select id="selectLastCarLoadingTime" resultType="com.dongxin.scm.sm.entity.Mat">
+        SELECT
+          *
+        FROM
+          sm_mat
+        WHERE
+          inventory_id = #{id}
+          AND del_flag = 0
+          AND DATE_FORMAT ( car_loading_time, '%Y-%m-%d' ) > DATE_FORMAT ( LAST_DAY( CONCAT( #{date}, "-15" ) ) - 2, '%Y-%m-%d' )
+          AND DATE_FORMAT ( car_loading_time, '%Y-%m-%d' ) &lt;= DATE_FORMAT ( LAST_DAY( CONCAT( #{date}, "-15" ) ) , '%Y-%m-%d' )
+    </select>
+
+    <select id="selectAveragePrice" resultType="java.math.BigDecimal">
+        SELECT
+	      ROUND(avg(cost_price),3)
+        FROM
+	      sm_mat
+        WHERE
+          prod_class_code = #{prodClassCode}
+	      AND DATE_FORMAT ( storage_time, '%Y-%m-%d' ) =  DATE_FORMAT ( #{date}, '%Y-%m-%d' )
+	      AND tenant_id = #{tenantId}
+
+    </select>
+
+    <select id="selectCarLodingTime" resultType="java.util.Date">
+        SELECT DISTINCT
+        	car_loading_time
+        FROM
+        	sm_mat
+        WHERE
+    	    inventory_id = #{inventoryId}
+    	AND car_loading_time IS NOT NULL
+        ORDER BY
+	        car_loading_time
+	        LIMIT 1
+    </select>
+    <select id="selectByWarehouseWarrantId" parameterType="String" resultType="com.dongxin.scm.sm.entity.Mat">
+        SELECT *
+        FROM sm_mat
+        WHERE warehouse_warrant_id = #{warehouseWarrantId}
+          and del_flag = 0
+    </select>
+</mapper>

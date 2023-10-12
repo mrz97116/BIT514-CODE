@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.om.mapper.SalesOrderDetMapper">
+    <update id="deleteByMainId">
+        update om_sales_order_det
+        set del_flag = 1
+        where parent_id = #{mainId}
+    </update>
+
+
+    <select id="selectByMainId" parameterType="String" resultType="com.dongxin.scm.om.entity.SalesOrderDet">
+        SELECT *
+        FROM om_sales_order_det
+        WHERE parent_id = #{mainId}
+          and del_flag = 0
+    </select>
+
+    <select id="selectByGoodEntrustmentLetterId" parameterType="String" resultType="com.dongxin.scm.om.entity.SalesOrderDet">
+        SELECT *
+        FROM om_sales_order_det
+        WHERE good_entrustment_letter_id = #{goodEntrustmentLetterId}
+          and del_flag = 0
+    </select>
+
+</mapper>

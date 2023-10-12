@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.cm.mapper.AttorneyMapper">
+    <select id="attorneyMaxNum" resultType="Long" parameterType="java.lang.String">
+        SELECT MAX(
+                       SUBSTR(DELEGATE_NO, 10, 4))
+        FROM CM_ATTORNEY T
+        WHERE SUBSTR(T.DELEGATE_NO, 1, 9) = #{numSeq}
+    </select>
+</mapper>

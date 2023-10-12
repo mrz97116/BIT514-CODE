@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.fm.mapper.CustomerFoundSummaryMapper">
+    <update id="updateCustomerFoundSummary" parameterType="com.dongxin.scm.fm.entity.CustomerFoundSummary">
+      update fm_customer_found_summary
+      set ending_banlance = #{customerFoundSummary.endingBanlance}
+      where customer_id = #{customerFoundSummary.customerId}
+      and tenant_id = #{customerFoundSummary.tenantId}
+      and month = date_format( CURDATE( ), '%Y-%m' )
+    </update>
+</mapper>

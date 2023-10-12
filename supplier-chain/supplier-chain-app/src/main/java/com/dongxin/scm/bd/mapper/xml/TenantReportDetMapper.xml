@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.bd.mapper.TenantReportDetMapper">
+
+    <delete id="deleteByMainId" parameterType="String">
+        DELETE
+        FROM sys_tenant_report_det
+        WHERE parent_id = #{mainId}    </delete>
+
+    <select id="selectByMainId" parameterType="String" resultType="com.dongxin.scm.bd.entity.TenantReportDet">
+        SELECT *
+        FROM sys_tenant_report_det
+        WHERE parent_id = #{mainId}    </select>
+</mapper>

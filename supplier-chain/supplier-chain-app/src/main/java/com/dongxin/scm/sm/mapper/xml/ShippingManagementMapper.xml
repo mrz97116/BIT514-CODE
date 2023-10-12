@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.sm.mapper.ShippingManagementMapper">
+
+    <select id="getMatThicks" parameterType="String" resultType="com.dongxin.scm.sm.vo.OptionVO">
+        select mat_thick text, mat_thick value
+        from sm_shipping_management
+        <where>
+            del_flag = 0
+            and (mat_status = 'ON_BOARD')
+            and tenant_id = 12
+            <if test="prodClassCode != '' ">
+                and prod_class_code = #{prodClassCode}
+            </if>
+        </where>
+          GROUP BY mat_thick
+    </select>
+</mapper>

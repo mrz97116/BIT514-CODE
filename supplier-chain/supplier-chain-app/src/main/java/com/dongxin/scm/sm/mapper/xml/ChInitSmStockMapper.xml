@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.sm.mapper.ChInitSmStockMapper">
+
+    <select id="selectAll" resultType="com.dongxin.scm.sm.entity.ChInitSmStock">
+        SELECT *
+        FROM ch_init_sm_stock
+    </select>
+    <select id="selectProdName" parameterType="com.dongxin.scm.sm.entity.ChInitSmStock" resultType="java.lang.String">
+        SELECT cipc.prod_name
+        FROM ch_init_prod_code cipc
+        WHERE cipc.prod_code = #{chInitSmStock.productCode}
+          AND cipc.cust_mat_specs = #{chInitSmStock.specs}
+
+    </select>
+    <select id="selectWeight" parameterType="com.dongxin.scm.sm.entity.ChInitSmStock" resultType="java.lang.String">
+        SELECT cip.weigt
+        FROM ch_init_prod cip
+        WHERE cip.prod_code = #{chInitSmStock.productCode}
+          AND cip.specs = #{chInitSmStock.specs}
+          AND cip.prod_name = #{chInitSmStock.prodName}
+          AND cip.prod_class_code = #{chInitSmStock.type}
+          AND cip.size = #{chInitSmStock.size}
+
+
+    </select>
+
+</mapper>

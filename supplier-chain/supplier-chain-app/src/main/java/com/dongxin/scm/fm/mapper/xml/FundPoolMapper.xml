@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.fm.mapper.FundPoolMapper">
+
+    <select id="selectThisMonthFundPoolList" resultType="com.dongxin.scm.fm.entity.FundPool">
+        SELECT *
+        FROM fm_fund_pool
+        WHERE incoming_date &gt;= #{thisMonthNumberOne}
+          AND status = #{approve}
+    </select>
+    <!--    <select id="selectThisMonthFundPoolList" resultType="com.dongxin.scm.home.entity.FundPoolVO">-->
+    <!--        SELECT-->
+    <!--            *-->
+    <!--        FROM-->
+    <!--            fm_fund_pool-->
+    <!--        WHERE-->
+    <!--            date_format(incoming_date,'%Y%m') = date_format(new(),'%Y%m')-->
+    <!--    </select>-->
+    <select id="selectFundPoolSeven" resultType="com.dongxin.scm.fm.entity.FundPool" parameterType="java.util.Date">
+        SELECT *
+        FROM fm_fund_pool
+        WHERE incoming_date &gt;= #{sevenDaysAgoDate}
+    </select>
+
+    <select id="queryBankTypeByBankId" resultType="java.lang.String" parameterType="java.lang.String">
+        <!--        select-->
+        <!--            b.type_name-->
+        <!--        from-->
+        <!--            fm_bank a,-->
+        <!--            fm_bank_category b,-->
+        <!--            fm_bank_type c-->
+        <!--        where-->
+        <!--            a.type_id = c.type_id-->
+        <!--            and-->
+        <!--            c.category_id = b.type-->
+        <!--            and-->
+        <!--            a.id = #{bankId}-->
+        select
+        category
+        from
+        fm_bank
+        where
+        id = #{bankId}
+    </select>
+
+    <select id="selectInitFundPool" resultType="com.dongxin.scm.fm.entity.InitMoeny">
+        select
+            cifp.company_name AS companyName,
+            cifp.income_amount AS account,
+            cifp.type AS type,
+            cifp.ticket_date AS ticketDate
+        from
+            ch_init_fund_pool AS cifp
+    </select>
+
+    <select id="sumInComeMoney" resultType="java.math.BigDecimal">
+        select (case when sum(incoming_amount) is null then '0' else sum(incoming_amount) end) totalAmount from fm_fund_pool
+        where customer_id = #{customerId}
+        and tenant_id = #{tenant_id}
+        and (case when incoming_date is null then create_time else incoming_date end) between #{startDay} and #{endDay}
+        and status = 'approve'
+        and income_method = 'normal_payment'
+    </select>
+
+    <select id="selectFundPool" resultType="com.dongxin.scm.fm.entity.FundPool">
+        select
+        *
+        from
+        fm_fund_pool
+        <where>
+            customer_id = #{customerId}
+            and
+            status = 'approve'
+            and
+            del_flag = 0
+            and
+            avail_amount > 0
+            <if test="paymentMethod != null and paymentMethod != ''">
+                and payment_method = #{paymentMethod}
+            </if>
+        </where>
+        ORDER BY
+            create_time DESC
+
+    </select>
+
+    <select id="getCustomerFundPool" resultType="com.dongxin.scm.fm.entity.FundPool">
+        select
+        *
+        from
+        fm_fund_pool
+        where
+        del_flag = '0'
+        and avail_amount > 0
+        and status = 'approve'
+        <if test="customerId != null and customerId != ''">
+            and customer_id = #{customerId}
+        </if>
+    </select>
+
+</mapper>

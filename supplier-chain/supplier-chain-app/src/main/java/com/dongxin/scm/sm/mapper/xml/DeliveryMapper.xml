@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.sm.mapper.DeliveryMapper">
+
+    <select id="querySalesOrderDTOList" parameterType="com.dongxin.scm.sm.vo.SalesOrderVO"
+            resultType="com.dongxin.scm.sm.dto.SalesOrderDTO">
+        SELECT
+        a.sale_bill_no,
+        a.contract_no,
+        a.order_no,
+        a.customer_id,
+        a.tenant_id,
+        b.id,
+        b.sys_org_code,
+        b.sale_bill_no AS bill_no,
+        b.order_item_no,
+        b.qty,
+        b.weight,
+        b.price,
+        b.total_price,
+        b.order_len,
+        b.order_width,
+        b.order_thick,
+        b.prod_cname,
+        b.prod_class_code,
+        b.sg_std,
+        b.mat_kind,
+        b.prod_cname_other
+        FROM
+        om_sales_order a,
+        om_sales_order_det b
+        <where>
+            a.sale_bill_no = b.sale_bill_no
+            and b.deliver_weight <![CDATA[ < ]]> b.weight
+            <if test="salesOrderVO != null">
+                <if test="salesOrderVO.contractNo != null and salesOrderVO.contractNo != ''">
+                    and a.contract_no like '%${salesOrderVO.contractNo}%'
+                </if>
+                <if test="salesOrderVO.saleBillNo != null and salesOrderVO.saleBillNo != ''">
+                    and b.sale_bill_no like '%${salesOrderVO.saleBillNo}%'
+                </if>
+            </if>
+        </where>
+        and b.del_flag = 0
+    </select>
+
+</mapper>

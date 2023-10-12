@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.bd.mapper.CompanyTenantMapper">
+    <select id="querySys_companyInfo" resultType="com.dongxin.scm.bd.vo.CompanyTenantVo">
+        SELECT
+        s.id as 'id',
+        sd.tenant_code as 'tenantcode',
+        s.company_name as 'companyname',
+        (case s.configuration when 'unpaid' then '先合同后提单' when 'paid' then '先提单后合同' end ) as 'configurationName',
+        s.configuration as configuration,
+        (case s.stock_configuration when '0' then '待入库' when '1' then '删除' end ) as 'stockConfigurationName',
+        s.stock_configuration as stockConfiguration,
+        (case s.cutdeal_configuration when '0' then '是' when '1' then '否' end ) as 'cutdealConfigurationName',
+        s.cutdeal_configuration as cutdealConfiguration,
+        (case s.order_stock_configuration when '0' then '同间仓库' when '1' then '多间仓库' end ) as 'orderStockConfigurationName',
+        s.order_stock_configuration as orderStockConfiguration,
+        (case s.auto_settle when '0' then '否' when '1' then '是' end ) as 'autoSettleName',
+        s.auto_settle as autoSettle,
+        (case s.diff_cus_bat_settle when '0' then '否' when '1' then '是' end ) as 'diffCusBatSetName',
+        s.diff_cus_bat_settle as diffCusBatSettle,
+        (case s.sales_det_deliver_expense when '0' then '否' when '1' then '是' end ) as 'salesDetDeliverExpenseName',
+        s.sales_det_deliver_expense as salesDetDeliverExpense,
+        (case s.sales_det_add_price when '0' then '否' when '1' then '是' end ) as 'salesDetAddPriceName',
+        s.sales_det_add_price as salesDetAddPrice,
+        (case s.storage_consignee_unit_check when '0' then '否' when '1' then '是' end ) as 'storageConsigneeUnitCheckName',
+        s.storage_consignee_unit_check as storageConsigneeUnitCheck,
+        (case s.inventory_timing_configuration when '0' then '否' when '1' then '是' end ) as 'inventoryTimingConfigurationName',
+        s.inventory_timing_configuration as inventoryTimingConfiguration,
+        (case s.shipping_management_configuration when '0' then '否' when '1' then '是' end ) as 'shippingManagementConfigurationName',
+        s.shipping_management_configuration as shippingManagementConfiguration,
+        (case s.sales_det_basic_price when '0' then '否' when '1' then '是' end ) as 'salesDetBasicPriceName',
+        s.sales_det_basic_price as salesDetBasicPrice,
+        (case s.average_cost_check when '0' then '否' when '1' then '是' end ) as 'averageCostCheckName',
+        s.average_cost_check as averageCostCheck,
+        s.sales_det_theory_weight as salesDetTheoryWeight,
+        s.sales_det_theory_price as salesDetTheoryPrice,
+        (case s.prod_class_serial_no when '0' then '否' when '1' then '是' end ) as 'prodClassSerialNoName',
+        s.prod_class_serial_no as prodClassSerialNo,
+        (case s.stack_timing_configuration when '0' then '否' when '1' then '是' end ) as 'stackTimingConfigurationName',
+        s.stack_timing_configuration as stackTimingConfiguration,
+        (case s.write_off_reviewer when '0' then '否' when '1' then '是' end ) as 'writeOffReviewer',
+        s.write_off_reviewer as writeOffReviewer
+        FROM
+        sys_company_tenant s
+        INNER JOIN sys_company_tenant_det sd ON s.id = sd.parent_id
+        order by sd.tenant_code
+    </select>
+
+
+    <select id="queryPaymentConfiguration" parameterType="Integer" resultType="com.dongxin.scm.bd.vo.CompanyTenantVo">
+        SELECT
+        *
+        FROM
+        sys_company_tenant s
+        INNER JOIN sys_company_tenant_det sd ON s.id = sd.parent_id
+        WHERE sd.tenant_code = #{tenant_Code}
+    </select>
+</mapper>

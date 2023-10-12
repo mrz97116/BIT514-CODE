@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.scm.sm.mapper.ProcessingDetMapper">
+    <select id="getDeleteListById" parameterType="java.lang.String" resultType="com.dongxin.scm.sm.entity.ProcessingDet">
+        select
+            *
+        from
+            sm_processing_det
+        where
+            process_no = #{processingId}
+
+    </select>
+</mapper>
